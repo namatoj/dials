@@ -1,0 +1,131 @@
+<html>
+  <head>
+    <style >
+      body {
+        margin: 0px;
+      }
+
+      #canvas {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
+      </style>
+  </head>
+  <body>
+  <canvas id="canvas"></canvas>
+  </body>
+    <script>
+console.log("hello")
+
+
+const scale = 2;
+const c = document.getElementById("canvas");
+c.width = window.innerWidth * scale;
+c.height = window.innerHeight * scale;
+
+function getTimeObject() {
+  var d = new Date();
+  var n = d.getHours();
+  var s = d.getSeconds();
+  var m = d.getMinutes();
+  var h = d.getHours();
+  var milli = d.getMilliseconds();
+  var time = {
+    "hour": h,
+    "minute": m,
+    "second": s,
+    "millisecond": milli
+  };
+  return time;
+}
+
+function drawLineAtAngle(ctx, angle, length, color, x, y) {
+  var x2 = 0;
+  var y2 = 0;
+  var radians = angle * Math.PI / 180;
+  x2 = Math.cos(radians) * length;
+  y2 = Math.sin(radians) * length;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + x2, y+y2);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = color;
+  ctx.stroke();
+  return {
+    "x": x + x2,
+    "y": y + y2
+  };
+}
+
+const dots = {}
+
+
+
+function drawDots(ctx) {
+  // for key in dots
+  for (var key in dots) {
+    var dot = dots[key];
+    ctx.beginPath();
+    ctx.arc(dot.x, dot.y, 2, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ff3322';
+    ctx.fill();
+  }
+}
+
+console.log(getTimeObject())
+
+
+
+function render() {
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, c.width, c.height);
+
+  drawDots(ctx);
+
+  var time = getTimeObject();
+  var hour = time.hour;
+  var minute = time.minute;
+  var second = time.second;
+  var milli = time.millisecond;
+
+  var hourAngle = (hour / 12) * 360 + (minute / 60) * 360 / 12 + (second / 60) * 360 / 12 / 60;
+  var minuteAngle = (minute / 60) * 360 + (second / 60) * 360 / 60 + (milli / 1000) * 360 / 60 / 60;
+  var secondAngle = (second / 60) * 360 + (milli / 1000) * 360 / 60;
+
+  // get canvas center
+  var centerX = canvas.width / 2;
+  var centerY = canvas.height / 2;
+
+  var lineLength = (Math.min(canvas.width, canvas.height) / 3 - 10 ) / scale;
+  console.log(lineLength)
+
+  // draw line at hourAngle
+  const hourPoint = drawLineAtAngle(ctx, hourAngle - 90, lineLength, '#666', centerX, centerY);
+  const minutePoint = drawLineAtAngle(ctx, minuteAngle - 90, lineLength, '#666', hourPoint.x, hourPoint.y);
+  const secondPoint = drawLineAtAngle(ctx, secondAngle - 90, lineLength, '#666', minutePoint.x, minutePoint.y);
+
+  dots[`${hour}${minute}${second}`] = secondPoint;
+}
+
+function setup() {
+  render();
+  setInterval(render, 16);
+}
+
+// call render when document has loaded
+if (document.readyState === 'complete') {
+  setup()
+} else {
+  window.addEventListener('load', setup);
+}
+
+
+
+
+    </script>
+</html>
