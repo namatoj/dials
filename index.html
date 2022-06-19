@@ -51,7 +51,7 @@ function drawLineAtAngle(ctx, angle, length, color, x, y) {
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.lineTo(x + x2, y+y2);
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 4;
   ctx.strokeStyle = color;
   ctx.stroke();
   return {
@@ -69,7 +69,7 @@ function drawDots(ctx) {
   for (var key in dots) {
     var dot = dots[key];
     ctx.beginPath();
-    ctx.arc(dot.x, dot.y, 2, 0, 2 * Math.PI);
+    ctx.arc(dot.x, dot.y, 4, 0, 2 * Math.PI);
     ctx.fillStyle = '#ff3322';
     ctx.fill();
   }
